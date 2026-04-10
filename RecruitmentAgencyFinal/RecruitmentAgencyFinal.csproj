@@ -241,6 +241,7 @@
     <Content Include="Views\Resume\All.cshtml" />
     <Content Include="Views\Resume\Details.cshtml" />
     <Content Include="Views\Applications\Index.cshtml" />
+    <Content Include="Views\Vacancies\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
