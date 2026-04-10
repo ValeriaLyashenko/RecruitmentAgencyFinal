@@ -1,0 +1,46 @@
+﻿@model RecruitmentAgencyFinal.Models.Resume
+
+@{
+    ViewBag.Title = "Детали резюме";
+}
+
+<h2>Детали резюме</h2>
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4>@Model.FullName</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Дата рождения:</dt>
+            <dd class="col-sm-9">@Model.BirthDate.ToString("dd.MM.yyyy")</dd>
+
+            <dt class="col-sm-3">Желаемая должность:</dt>
+            <dd class="col-sm-9">@Model.Position</dd>
+
+            <dt class="col-sm-3">Опыт работы:</dt>
+            <dd class="col-sm-9">@Model.Experience лет</dd>
+
+            <dt class="col-sm-3">Образование:</dt>
+            <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Education) ? "Не указано" : Model.Education)</dd>
+
+            <dt class="col-sm-3">Навыки:</dt>
+            <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Skills) ? "Не указаны" : Model.Skills)</dd>
+
+            <dt class="col-sm-3">Ожидаемая зарплата:</dt>
+            <dd class="col-sm-9">@Model.ExpectedSalary.ToString("C0")</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Телефон:</dt>
+            <dd class="col-sm-9">@Model.Phone</dd>
+
+            <dt class="col-sm-3">Дата создания:</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToString("dd.MM.yyyy")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="@Url.Action("All")" class="btn btn-default">Назад к списку</a>
+    </div>
+</div>

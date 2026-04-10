@@ -1,0 +1,74 @@
+﻿@model RecruitmentAgencyFinal.Models.Vacancy
+
+@{
+    ViewBag.Title = Model.Title;
+    string userRole = Session["UserRole"] != null ? Session["UserRole"].ToString() : "";
+    bool isAuthenticated = Session["UserId"] != null;
+    bool isAdminOrManager = (userRole == "Admin" || userRole == "Manager");
+}
+
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>@Model.Title</h2>
+        </div>
+        <div class="card-body">
+            <h4>Описание вакансии</h4>
+            <p>@Model.Description</p>
+
+            <hr />
+
+            <h4>Требования</h4>
+            <p>@Model.Requirements</p>
+
+            <hr />
+
+            <dl class="row">
+                <dt class="col-sm-3">Зарплата:</dt>
+                <dd class="col-sm-9">@Model.Salary.ToString("C0")</dd>
+
+                <dt class="col-sm-3">Требуемый опыт:</dt>
+                <dd class="col-sm-9">от @Model.ExperienceRequired лет</dd>
+
+                <dt class="col-sm-3">Статус:</dt>
+                <dd class="col-sm-9">
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success">Активна</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Закрыта</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Дата размещения:</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToString("dd.MM.yyyy")</dd>
+            </dl>
+        </div>
+        <div class="card-footer">
+            @Html.ActionLink("Назад к списку", "Index", null, new { @class = "btn btn-secondary" })
+
+            @if (isAdminOrManager)
+            {
+                @Html.ActionLink("Редактировать", "Edit", new { id = Model.Id }, new { @class = "btn btn-warning" })
+                @Html.ActionLink("Подобрать кандидатов", "Match", new { id = Model.Id }, new { @class = "btn btn-primary" })
+            }
+            else if (isAuthenticated && userRole == "Applicant")
+            {
+                <button class="btn btn-success" onclick="applyForVacancy(@Model.Id)">Откликнуться на вакансию</button>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function applyForVacancy(id) {
+            if (confirm('Вы хотите откликнуться на эту вакансию?')) {
+                // Здесь будет логика отклика
+                alert('Ваш отклик отправлен! Мы свяжемся с вами в ближайшее время.');
+            }
+        }
+    </script>
+}

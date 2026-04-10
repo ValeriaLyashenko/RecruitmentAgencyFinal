@@ -1,0 +1,75 @@
+﻿@model RecruitmentAgencyFinal.Models.Resume
+
+@{
+    ViewBag.Title = "Моё резюме";
+    string userRole = Session["UserRole"] != null ? Session["UserRole"].ToString() : "";
+}
+
+<h2>Моё резюме</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h4>@Model.FullName</h4>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Дата рождения:</dt>
+                <dd class="col-sm-9">@Model.BirthDate.ToString("dd.MM.yyyy")</dd>
+
+                <dt class="col-sm-3">Желаемая должность:</dt>
+                <dd class="col-sm-9">@Model.Position</dd>
+
+                <dt class="col-sm-3">Опыт работы:</dt>
+                <dd class="col-sm-9">@Model.Experience лет</dd>
+
+                <dt class="col-sm-3">Образование:</dt>
+                <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Education) ? "Не указано" : Model.Education)</dd>
+
+                <dt class="col-sm-3">Навыки:</dt>
+                <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.Skills) ? "Не указаны" : Model.Skills)</dd>
+
+                <dt class="col-sm-3">Ожидаемая зарплата:</dt>
+                <dd class="col-sm-9">@Model.ExpectedSalary.ToString("C0")</dd>
+
+                <dt class="col-sm-3">Email:</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+
+                <dt class="col-sm-3">Телефон:</dt>
+                <dd class="col-sm-9">@Model.Phone</dd>
+
+                <dt class="col-sm-3">Дата создания:</dt>
+                <dd class="col-sm-9">@Model.CreatedAt.ToString("dd.MM.yyyy")</dd>
+
+                <dt class="col-sm-3">Статус:</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Status == "Active")
+                    {
+                        <span class="badge bg-success">Активно</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Неактивно</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+        <div class="card-footer">
+            <a href="@Url.Action("Edit")" class="btn btn-warning">Редактировать резюме</a>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-default">На главную</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <p>У вас ещё нет резюме. Заполните анкету, чтобы работодатели могли вас найти!</p>
+        <a href="@Url.Action("Create")" class="btn btn-success">Создать резюме</a>
+    </div>
+}

@@ -1,0 +1,163 @@
+﻿@model List<RecruitmentAgencyFinal.Models.Vacancy>
+
+@{
+    ViewBag.Title = "Вакансии";
+    string userRole = Session["UserRole"] != null ? Session["UserRole"].ToString() : "";
+    bool isAuthenticated = Session["UserId"] != null;
+    bool isAdminOrManager = (userRole == "Admin" || userRole == "Manager");
+    bool isApplicant = (userRole == "Applicant");
+
+    var activeVacancies = new List<RecruitmentAgencyFinal.Models.Vacancy>();
+    var closedVacancies = new List<RecruitmentAgencyFinal.Models.Vacancy>();
+
+    foreach (var v in Model)
+    {
+        if (v.IsActive)
+        {
+            activeVacancies.Add(v);
+        }
+        else
+        {
+            closedVacancies.Add(v);
+        }
+    }
+}
+
+<h2>Список вакансий</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (isAdminOrManager)
+{
+    <p>
+        <a href="@Url.Action("Create")" class="btn btn-success">+ Создать вакансию</a>
+    </p>
+}
+
+@if (activeVacancies.Count > 0)
+{
+    <h3>Активные вакансии</h3>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Зарплата</th>
+                <th>Опыт</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vacancy in activeVacancies)
+            {
+                <tr>
+                    <td>
+                        @vacancy.Title
+                </td>
+                <td>
+                    @vacancy.Salary.ToString("C0")
+            </td>
+            <td>от @vacancy.ExperienceRequired лет
+</td>
+<td>
+    <a href="@Url.Action("Details", new { id = vacancy.Id })" class="btn btn-info btn-sm">Детали</a>
+    @if (isAdminOrManager)
+    {
+        <a href="@Url.Action("Edit", new { id = vacancy.Id })" class="btn btn-warning btn-sm">Редактировать</a>
+        <a href="@Url.Action("Match", new { id = vacancy.Id })" class="btn btn-primary btn-sm">Подобрать</a>
+        <button class="btn btn-danger btn-sm" onclick="deleteVacancy(@vacancy.Id)">Удалить</button>
+    }
+    @if (isAuthenticated && isApplicant)
+    {
+        <button class="btn btn-success btn-sm" onclick="applyForVacancy(@vacancy.Id)">Откликнуться</button>
+    }
+</td>
+</tr>
+}
+        </tbody>
+    </table>
+}
+
+@if (closedVacancies.Count > 0 && isAdminOrManager)
+{
+    <h3 class="mt-4">Закрытые вакансии</h3>
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Зарплата</th>
+                <th>Опыт</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vacancy in closedVacancies)
+            {
+                <tr>
+                    <td>
+                        @vacancy.Title
+                </td>
+                <td>
+                    @vacancy.Salary.ToString("C0")
+            </td>
+            <td>от @vacancy.ExperienceRequired лет
+</td>
+<td>
+    <a href="@Url.Action("Details", new { id = vacancy.Id })" class="btn btn-info btn-sm">Детали</a>
+    <a href="@Url.Action("Edit", new { id = vacancy.Id })" class="btn btn-warning btn-sm">Редактировать</a>
+    <button class="btn btn-success btn-sm" onclick="activateVacancy(@vacancy.Id)">Активировать</button>
+    <button class="btn btn-danger btn-sm" onclick="deleteVacancy(@vacancy.Id)">Удалить</button>
+</td>
+</tr>
+}
+        </tbody>
+    </table>
+}
+
+@if (activeVacancies.Count == 0 && closedVacancies.Count == 0)
+{
+    <div class="alert alert-info">Вакансии не найдены.</div>
+}
+
+@section Scripts {
+    <script>
+        function deleteVacancy(id) {
+            if (confirm('Удалить вакансию?')) {
+                $.post('@Url.Action("Delete", "Vacancies")', { id: id })
+                    .done(function(data) {
+                        if (data.success) location.reload();
+                        else alert(data.message);
+                    });
+            }
+        }
+
+        function activateVacancy(id) {
+            if (confirm('Активировать вакансию?')) {
+                $.post('@Url.Action("Activate", "Vacancies")', { id: id })
+                    .done(function() { location.reload(); });
+            }
+        }
+
+        function applyForVacancy(vacancyId) {
+            if (confirm('Вы хотите откликнуться на эту вакансию?')) {
+                $.ajax({
+                    url: '@Url.Action("Apply", "Applications")',
+                    type: 'POST',
+                    data: { vacancyId: vacancyId },
+                    success: function (data) {
+                        if (data.success) {
+                            alert(data.message);
+                        } else {
+                            alert('Ошибка: ' + data.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Ошибка при отправке отклика');
+                    }
+                });
+            }
+        }
+    </script>
+}

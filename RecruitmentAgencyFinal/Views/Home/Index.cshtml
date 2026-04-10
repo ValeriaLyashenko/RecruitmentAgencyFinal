@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Кадровое агентство";
+    bool isAuthenticated = Session["UserId"] != null;
+    string userRole = Session["UserRole"] != null ? Session["UserRole"].ToString() : "";
+    bool canViewCandidates = (userRole == "Admin" || userRole == "Manager");
+}
+
+<div class="jumbotron text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 50px; border-radius: 15px;">
+    <h1 class="display-4">Добро пожаловать в кадровое агентство!</h1>
+    <p class="lead">Помогаем найти лучших сотрудников и работу мечты.</p>
+    @if (!isAuthenticated)
+    {
+        <p>
+            <a href="@Url.Action("Register", "Account")" class="btn btn-success btn-lg">Зарегистрироваться</a>
+            <a href="@Url.Action("Login", "Account")" class="btn btn-primary btn-lg">Войти</a>
+        </p>
+    }
+    else
+    {
+        <p>Здравствуйте, <strong>@Session["UserFullName"]</strong>!</p>
+    }
+</div>
+
+<div class="row text-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3><i class="fas fa-briefcase"></i> Вакансии</h3>
+                <p>Просмотр актуальных вакансий</p>
+                <a href="@Url.Action("Index", "Vacancies")" class="btn btn-primary">Смотреть вакансии</a>
+            </div>
+        </div>
+    </div>
+
+    @if (canViewCandidates)
+    {
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3><i class="fas fa-users"></i> Кандидаты</h3>
+                    <p>Управление базой кандидатов</p>
+                    <a href="@Url.Action("Index", "Candidates")" class="btn btn-success">Смотреть кандидатов</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

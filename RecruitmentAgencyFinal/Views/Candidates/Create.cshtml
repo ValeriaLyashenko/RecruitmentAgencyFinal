@@ -1,0 +1,98 @@
+﻿@model RecruitmentAgencyFinal.Models.Resume
+
+@{
+    ViewBag.Title = "Создание резюме";
+}
+
+<h2>Создание резюме</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<form method="post" action="@Url.Action("Create")">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="UserId" value="@ViewBag.UserId" />
+    <input type="hidden" name="CreatedAt" value="@DateTime.Now" />
+    <input type="hidden" name="Status" value="Active" />
+
+    <div class="form-horizontal">
+        <hr />
+
+        <div class="form-group">
+            <label class="control-label col-md-2">ФИО</label>
+            <div class="col-md-10">
+                <input type="text" name="FullName" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Дата рождения</label>
+            <div class="col-md-10">
+                <input type="date" name="BirthDate" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Желаемая должность</label>
+            <div class="col-md-10">
+                <input type="text" name="Position" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Опыт работы (лет)</label>
+            <div class="col-md-10">
+                <input type="number" name="Experience" class="form-control" min="0" max="50" value="0" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Образование</label>
+            <div class="col-md-10">
+                <textarea name="Education" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Навыки</label>
+            <div class="col-md-10">
+                <textarea name="Skills" class="form-control" rows="3" placeholder="C#, SQL, ASP.NET, JavaScript..."></textarea>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Ожидаемая зарплата (руб.)</label>
+            <div class="col-md-10">
+                <input type="number" name="ExpectedSalary" class="form-control" step="1000" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Email</label>
+            <div class="col-md-10">
+                <input type="email" name="Email" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Телефон</label>
+            <div class="col-md-10">
+                <input type="text" name="Phone" class="form-control" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Создать резюме" class="btn btn-primary" />
+                <a href="@Url.Action("Index")" class="btn btn-default">Отмена</a>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,34 @@
+﻿@model RecruitmentAgencyFinal.Models.Candidate
+
+@{
+    ViewBag.Title = "Удаление кандидата";
+}
+
+<h2>Удаление кандидата</h2>
+
+<div class="alert alert-danger">
+    <h3>Вы уверены, что хотите удалить этого кандидата?</h3>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ФИО:</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3">Должность:</dt>
+            <dd class="col-sm-9">@Model.Position</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <input type="submit" value="Удалить" class="btn btn-danger" />
+            <a href="@Url.Action("Index")" class="btn btn-default">Отмена</a>
+        }
+    </div>
+</div>

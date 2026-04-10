@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Кадровое агентство</title>
+
+    <!-- Bootstrap CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        .pagination {
+            display: inline-flex;
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+            .pagination li {
+                margin: 0 3px;
+            }
+
+                .pagination li a, .pagination li span {
+                    display: block;
+                    padding: 8px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    text-decoration: none;
+                    color: #337ab7;
+                    background-color: #fff;
+                    transition: all 0.3s ease;
+                }
+
+                    .pagination li a:hover {
+                        background-color: #eee;
+                        border-color: #337ab7;
+                    }
+
+                .pagination li.active span {
+                    background-color: #337ab7;
+                    border-color: #337ab7;
+                    color: white;
+                    cursor: default;
+                }
+
+                .pagination li.disabled span {
+                    color: #ccc;
+                    background-color: #f9f9f9;
+                    border-color: #ddd;
+                    cursor: not-allowed;
+                }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px 0;
+            color: #666;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <div class="container">
+            @Html.ActionLink("Кадровое агентство", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Переключить навигацию" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <!-- Основные пункты меню (видны всем) -->
+                    <li>@Html.ActionLink("Главная", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Вакансии", "Index", "Vacancies", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("О нас", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Контакты", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    @if (Session["UserId"] != null)
+                    {
+                        string role = Session["UserRole"] != null ? Session["UserRole"].ToString() : "";
+
+                        <!-- Моё резюме (только для соискателя Applicant) -->
+                        if (role == "Applicant")
+                        {
+                            <li>@Html.ActionLink("Моё резюме", "Index", "Resume", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+
+                        <!-- Кандидаты, Все резюме, Отклики (только для Admin и Manager) -->
+                        if (role == "Admin" || role == "Manager")
+                        {
+                            <li>@Html.ActionLink("Кандидаты", "Index", "Candidates", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Все резюме", "All", "Resume", new { area = "" }, new { @class = "nav-link" })</li>
+                            <li>@Html.ActionLink("Отклики", "Index", "Applications", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+
+                        <!-- Пользователи (только для Admin) -->
+                        if (role == "Admin")
+                        {
+                            <li>@Html.ActionLink("Пользователи", "Index", "Users", new { area = "" }, new { @class = "nav-link" })</li>
+                        }
+                    }
+                </ul>
+
+                <!-- Правая часть меню (пользователь) -->
+                <ul class="nav navbar-nav navbar-right">
+                    @if (Session["UserId"] != null)
+                    {
+                        string role = Session["UserRole"] != null ? Session["UserRole"].ToString() : "";
+                        string roleName = role == "Admin" ? "Администратор" : (role == "Manager" ? "Менеджер" : "Соискатель");
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle"></i> @Session["UserEmail"]
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><span class="dropdown-item-text"><i class="fas fa-tag"></i> <strong>Роль:</strong> @roleName</span></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>@Html.ActionLink("Выйти", "Logout", "Account", null, new { @class = "dropdown-item" })</li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Вход", "Login", "Account", null, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Регистрация", "Register", "Account", null, new { @class = "nav-link" })</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer class="footer">
+            <p>&copy; @DateTime.Now.Year - Кадровое агентство. Все права защищены.</p>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

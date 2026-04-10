@@ -1,0 +1,66 @@
+﻿@model List<RecruitmentAgencyFinal.Models.UserTemp>
+
+@{
+    ViewBag.Title = "Управление пользователями";
+}
+
+<h2>Управление пользователями</h2>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>ФИО</th>
+            <th>Роль</th>
+            <th>Дата регистрации</th>
+            <th>Активен</th>
+            <th>Доступ до</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Id</td>
+                <td>@user.Email</td>
+                <td>@user.FullName</td>
+                <td>
+                    @if (user.Role == "Admin")
+                    {
+                        <span class="badge bg-danger">Admin</span>
+                    }
+                    else if (user.Role == "Manager")
+                    {
+                        <span class="badge bg-warning">Manager</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-info">Applicant</span>
+                    }
+                </td>
+                <td>@user.RegisteredAt.ToString("dd.MM.yyyy")</td>
+                <td>
+                    @if (user.IsActive)
+                    {
+                        <span class="text-success">Да</span>
+                    }
+                    else
+                    {
+                        <span class="text-danger">Нет</span>
+                    }
+                </td>
+                <td>
+                    @if (user.AccessUntil.HasValue)
+                    {
+                        @user.AccessUntil.Value.ToString("dd.MM.yyyy")
+                    }
+                    else
+                    {
+                        <span>Бессрочно</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

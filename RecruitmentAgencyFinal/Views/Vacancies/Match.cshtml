@@ -1,0 +1,80 @@
+@model List<RecruitmentAgencyFinal.Models.MatchResult>
+
+@{
+    ViewBag.Title = "Подбор кандидатов";
+    var vacancy = ViewBag.Vacancy as RecruitmentAgencyFinal.Models.Vacancy;
+}
+
+<h2>Подбор кандидатов для вакансии: @vacancy?.Title</h2>
+
+<div class="alert alert-info">
+    <strong>Требования:</strong> @vacancy?.Requirements<br />
+    <strong>Требуемый опыт:</strong> @vacancy?.ExperienceRequired лет<br />
+    <strong>Зарплата:</strong> @vacancy?.Salary.ToString("C0")
+</div>
+
+<h3>Подходящие кандидаты</h3>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Должность</th>
+                <th>Опыт</th>
+                <th>Навыки</th>
+                <th>Совпадение</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var match in Model)
+            {
+                <tr>
+                    <td>@match.FullName</td>
+                    <td>@match.Position</td>
+                    <td>@match.Experience лет</td>
+                    <td>@match.Skills</td>
+                    <td>
+                        <div class="progress">
+                            <div class="progress-bar @(match.MatchPercentage >= 70 ? "bg-success" : (match.MatchPercentage >= 50 ? "bg-warning" : "bg-danger"))"
+                                 role="progressbar"
+                                 style="width: @match.MatchPercentage%"
+                                 aria-valuenow="@match.MatchPercentage"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                                @match.MatchPercentage%
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="inviteCandidate(@match.ResumeId, @vacancy.Id)">
+                            Пригласить
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">
+        <strong>Внимание!</strong> Нет кандидатов для подбора.
+    </div>
+}
+
+<p>
+    @Html.ActionLink("Назад к вакансиям", "Index", null, new { @class = "btn btn-default" })
+</p>
+
+@section Scripts {
+    <script>
+        function inviteCandidate(resumeId, vacancyId) {
+            if (confirm('Отправить приглашение кандидату?')) {
+                alert('Приглашение отправлено!');
+            }
+        }
+    </script>
+}

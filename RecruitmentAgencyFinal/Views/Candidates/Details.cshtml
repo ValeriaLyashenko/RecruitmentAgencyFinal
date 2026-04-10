@@ -1,0 +1,35 @@
+﻿@model RecruitmentAgencyFinal.Models.Candidate
+
+@{
+    ViewBag.Title = "Детали кандидата";
+}
+
+<h2>Информация о кандидате</h2>
+
+<div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ID:</dt>
+            <dd class="col-sm-9">@Model.Id</dd>
+
+            <dt class="col-sm-3">ФИО:</dt>
+            <dd class="col-sm-9">@Model.FullName</dd>
+
+            <dt class="col-sm-3">Должность:</dt>
+            <dd class="col-sm-9">@Model.Position</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+
+            <dt class="col-sm-3">Телефон:</dt>
+            <dd class="col-sm-9">@Model.Phone</dd>
+
+            <dt class="col-sm-3">Дата заявки:</dt>
+            <dd class="col-sm-9">@Model.ApplicationDate.ToString("dd.MM.yyyy HH:mm")</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning">Редактировать</a>
+        <a href="@Url.Action("Index")" class="btn btn-default">Назад</a>
+    </div>
+</div>

@@ -1,0 +1,130 @@
+﻿@model List<RecruitmentAgencyFinal.Models.Candidate>
+
+@{
+    ViewBag.Title = "Кандидаты";
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalCount = ViewBag.TotalCount ?? 0;
+    string searchTerm = ViewBag.SearchTerm ?? "";
+}
+
+<h2>Список кандидатов</h2>
+
+<div class="alert alert-info">
+    <strong>Всего кандидатов:</strong> @totalCount
+</div>
+
+<div class="form-inline" style="margin-bottom: 20px;">
+    @using (Html.BeginForm("Index", "Candidates", FormMethod.Get))
+    {
+        <div class="form-group">
+            <input type="text" name="searchTerm" class="form-control" placeholder="Поиск по ФИО, должности, email..." style="width: 400px;" value="@searchTerm" />
+            <button type="submit" class="btn btn-primary">Поиск</button>
+            <a href="@Url.Action("Index")" class="btn btn-default">Сбросить</a>
+        </div>
+    }
+</div>
+
+@using (Html.BeginForm("ExportToExcel", "Candidates", FormMethod.Post))
+{
+    <button type="submit" class="btn btn-success" style="margin-bottom: 20px;">
+        <i class="fas fa-file-excel"></i> Экспорт в Excel
+    </button>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ФИО</th>
+                <th>Должность</th>
+                <th>Email</th>
+                <th>Телефон</th>
+                <th>Дата заявки</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="candidateRow_@item.Id">
+                    <td>
+                        @item.Id
+                </td>
+                <td>
+                    @item.FullName
+            </td>
+            <td>@item.Position
+        </td>
+        <td>@item.Email
+    </td>
+    <td>@item.Phone
+</td>
+<td>@item.ApplicationDate.ToString("dd.MM.yyyy HH:mm")
+</td>
+<td>
+    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-info btn-sm">Детали</a>
+    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-warning btn-sm">Редактировать</a>
+    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-danger btn-sm">Удалить</a>
+    <button class="btn btn-danger btn-sm" onclick="deleteCandidateAjax(@item.Id)">AJAX</button>
+</td>
+</tr>
+}
+        </tbody>
+    </table>
+
+    if (totalPages > 1)
+    {
+        <div class="text-center">
+            <div class="btn-group">
+                @if (currentPage > 1)
+                {
+                    <a href="@Url.Action("Index", new { page = currentPage - 1, searchTerm = searchTerm })" class="btn btn-default">&laquo; Назад</a>
+                }
+                else
+                {
+                    <button class="btn btn-default" disabled>&laquo; Назад</button>
+                }
+
+                <button class="btn btn-primary" disabled>@currentPage / @totalPages</button>
+
+                @if (currentPage < totalPages)
+                {
+                    <a href="@Url.Action("Index", new { page = currentPage + 1, searchTerm = searchTerm })" class="btn btn-default">Вперёд &raquo;</a>
+                }
+                else
+                {
+                    <button class="btn btn-default" disabled>Вперёд &raquo;</button>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-info">Кандидаты не найдены.</div>
+}
+
+<p>
+    <a href="@Url.Action("Create")" class="btn btn-success">+ Добавить кандидата</a>
+</p>
+
+@section Scripts {
+    <script>
+        function deleteCandidateAjax(id) {
+            if (confirm('Удалить кандидата?')) {
+                $.post('@Url.Action("DeleteCandidateAjax", "Candidates")', { id: id })
+                    .done(function(data) {
+                        if (data.success) {
+                            $('#candidateRow_' + id).fadeOut(300, function() { $(this).remove(); });
+                            alert(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    });
+            }
+        }
+    </script>
+}

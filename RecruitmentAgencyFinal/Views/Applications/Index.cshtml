@@ -1,0 +1,87 @@
+﻿@model List<RecruitmentAgencyFinal.Models.Application>
+
+@{
+    ViewBag.Title = "Отклики на вакансии";
+}
+
+<h2>Отклики на вакансии</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID резюме</th>
+                <th>ID вакансии</th>
+                <th>Дата отклика</th>
+                <th>Статус</th>
+                <th>Комментарий</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Id
+                </td>
+                <td>
+                    @item.ResumeId
+            </td>
+            <td>@item.VacancyId
+        </td>
+        <td>
+            @item.AppliedAt.ToString("dd.MM.yyyy HH:mm")
+    </td>
+    <td>
+        @if (item.Status == "Pending")
+        {
+            <span class="badge bg-warning">На рассмотрении</span>
+        }
+        else if (item.Status == "Approved")
+        {
+            <span class="badge bg-success">Одобрено</span>
+        }
+        else
+        {
+            <span class="badge bg-danger">Отклонено</span>
+        }
+    </td>
+    <td>@(string.IsNullOrEmpty(item.ManagerComment) ? "—" : item.ManagerComment)
+    </td>
+    <td>
+        <button class="btn btn-success btn-sm" onclick="updateStatus(@item.Id, 'Approved')">Одобрить</button>
+        <button class="btn btn-danger btn-sm" onclick="updateStatus(@item.Id, 'Rejected')">Отклонить</button>
+    </td>
+</tr>
+}
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">Откликов пока нет.</div>
+}
+
+@section Scripts {
+    <script>
+        function updateStatus(id, status) {
+            var comment = prompt("Введите комментарий (необязательно):");
+            $.post('@Url.Action("UpdateStatus", "Applications")', { id: id, status: status, comment: comment })
+                .done(function (data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert("Ошибка при обновлении статуса");
+                    }
+                });
+        }
+    </script>
+}
